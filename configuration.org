@@ -1,0 +1,304 @@
+#+Title: Emacs configuration :cat:<<¡VAMOS PERU!>>:pe:
+#+Author: vale~
+
+* Shortkeys 
+(org-mode)
+	* ctr + _ :: undo
+	* alt + _ :: redo
+	* ctr + k :: kill lines over cursor
+	* alt + enter  :: copy structure
+	* <s :: tag for typing emacs code
+	* alt + up/down :: chang
+	* ctr + d :: erase char 
+	* M-x + "list-faces-display" :: modes
+* Install packages
+** Add Repositories
+	#+BEGIN_SRC emacs-lisp
+    (require 'package)
+    (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")                          
+		("melpa" . "http://melpa.milkbox.net/packages/")) )
+		(package-initialize)
+	#+END_SRC	
+** Package list 
+		#+BEGIN_SRC emacs-lisp
+			(setq package-list '(js2-mode undo-tree company-tern company ace-window
+																		neotree multiple-cursors multi-term powerline
+																		magit nyan-mode web-mode vue-mode all-the-icons 
+																		highlight-indent-guides org-bullets	emojify))     
+			(dolist (package package-list)
+			(unless (package-installed-p package)
+			(package-refresh-contents)
+			(package-install package)))
+		#+END_SRC 
+* Enviroment configuration
+* Vue-mode
+  #+BEGIN_SRC emacs-lisp
+	(setq vue-mode-packages
+	  '(vue-mode))
+
+	(setq vue-mode-excluded-packages '())
+
+	(defun vue-mode/init-vue-mode ()
+	  (use-package vue-mode
+				   :config
+				   (setq mmm-submode-decoration-level 2)))
+
+  #+END_SRC
+** Icons
+	 #+BEGIN_SRC emacs-lisp
+		 (require 'all-the-icons)
+	 #+END_SRC
+** Colors
+	 #+BEGIN_SRC emacs-lisp
+		 (set-foreground-color "white")
+		 (set-background-color "#161616")
+		 ;;(set-face-attribute 'helm-selection nil :background "#441100")
+	 #+END_SRC
+** Save session
+	 #+BEGIN_SRC emacs-lisp
+     (desktop-save-mode 1) ;;restore session 
+	 #+END_SRC
+** Disabled 
+		#+BEGIN_SRC emacs-lisp
+			(setq inhibit-startup-screen t)
+			(tool-bar-mode -1) ;;hide tool bar
+			(menu-bar-mode -1) ;;hide menu bar
+			(scroll-bar-mode -1) ;;hide scroll bar
+			(global-unset-key (kbd "C-z")) ;;disabled ctr + z = stop program
+		#+END_SRC 
+** New keybind
+	 #+BEGIN_SRC emacs-lisp
+		 (global-set-key (kbd "<f6>") (lambda() (interactive)(find-file "~/.emacs")))
+	 #+END_SRC
+** Tab properties
+*** length
+	 #+BEGIN_SRC emacs-lisp
+		 (setq-default tab-width 2)
+	 #+END_SRC
+*** indent
+   #+BEGIN_SRC emacs-lisp
+		 (setq-default tab-always-indent nil)
+		 ;; make return key also do indent, globally
+		 (electric-indent-mode 1)
+		 ;;(setq tab-stop-list (number-sequence 2 200 2))
+		#+END_SRC
+** Undotree
+	 #+BEGIN_SRC emacs-lisp
+		 (require 'undo-tree)
+		 (global-undo-tree-mode)
+	 #+END_SRC
+** Neotree
+	 #+BEGIN_SRC emacs-lisp
+		 (require 'neotree) 
+		 (global-set-key [f8] 'neotree-toggle)
+		 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))	 
+	 #+END_SRC
+** Multicursor
+	 #+BEGIN_SRC emacs-lisp
+		 (require 'multiple-cursors)
+		 (global-set-key (kbd "C-c C-c") 'mc/edit-lines)
+		 (global-set-key (kbd "C-c <") 'mc/mark-next-like-this)
+		 (global-set-key (kbd "C-c >") 'mc/mark-previous-like-this)
+		 (global-set-key (kbd "C-c C-q") 'mc/mark-all-like-this)
+	 #+END_SRC
+** Ace window
+	 #+BEGIN_SRC emacs-lisp
+     (require 'ace-window)     
+     (global-set-key (kbd "M-o") 'ace-window)
+	 #+END_SRC
+** Highlight
+*** indent guides
+		#+BEGIN_SRC emacs-lisp
+      (require 'highlight-indent-guides)
+      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+      (setq highlight-indent-guides-method 'character)
+		#+END_SRC
+** Emoji
+	 #+BEGIN_SRC emacs-lisp
+     (add-hook 'after-init-hook #'global-emojify-mode)
+	 #+END_SRC
+** Line number
+	 #+BEGIN_SRC emacs-lisp
+		 (setq display-line-numbers-type (quote relative))
+		 (global-display-line-numbers-mode t)
+		 (set-face-attribute 'line-number-current-line nil :background "#9bf442" :foreground "black" :weight 'bold)
+	 #+END_SRC
+** Fullscreen
+	 #+BEGIN_SRC emacs-lisp
+		 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+	 #+END_SRC
+** Parentheses
+		#+BEGIN_SRC emacs-lisp
+;			(setq hl-paren-attributes '((:weight bold :height 140 )))
+		#+END_SRC
+** Tab width
+	 #+BEGIN_SRC emacs-lisp
+		 (setq-default tab-width 4)
+	 #+END_SRC
+** Other
+	 #+BEGIN_SRC emacs-lisp
+     (show-paren-mode)
+     (electric-pair-mode)
+     ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+     (setq web-mode-enable-auto-closing t)
+	 #+END_SRC
+* Org-mode
+** Templates
+*** emacs-lisp 
+		#+BEGIN_SRC emacs-lisp
+      (add-to-list 'org-structure-template-alist
+                   '("emacs" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")
+                   ); Sirve para <emacs + tab y veras la magia xdd
+		#+END_SRC
+
+** Babel
+*** languages
+	 Allow babel to evaluate lisp, C, emacs-lisp and dot code.
+	 #+BEGIN_SRC emacs-lisp
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((lisp . t)
+        (emacs-lisp . t)
+        (js . t)))        
+	 #+END_SRC
+*** confirmation
+	 Avoid code confirmation 
+	 #+BEGIN_SRC emacs-lisp
+     (setq org-confirm-babel-evaluate nil)
+	 #+END_SRC
+** Enviroment configuration
+*** bullets
+	 #+BEGIN_SRC emacs-lisp
+     (require 'org-bullets)
+     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+	 #+END_SRC
+*** window
+	 Don't pop up a new window while a editing a src section
+	 #+BEGIN_SRC emacs-lisp
+     (setq org-src-window-setup 'current-window)
+     (setq org-src-fontify-natively t)
+	 #+END_SRC
+*** color
+**** levels
+		 #+BEGIN_SRC emacs-lisp
+			 (set-face-attribute 'org-level-1 nil :foreground "#57f2ef" :weight 'light :height 120)
+			 (set-face-attribute 'org-level-2 nil :foreground "#dc42f4" :weight 'light :height 120)
+			 (set-face-attribute 'org-level-3 nil :foreground "#eae607" :weight 'light :height 120)
+			 (set-face-attribute 'org-level-4 nil :foreground "#46fc7d" :weight 'light :height 120)
+		 #+END_SRC
+* Js2-mode
+	#+BEGIN_SRC emacs-lisp
+	  (require 'js2-mode)
+	  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+	  (add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
+	  (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2)))
+	  (setq js2-strict-missing-semi-warning nil)
+	  (setq js-indent-level 2)
+	  (add-hook 'js2-mode-hook (lambda ()
+								 (tern-mode t)
+								 (company-mode)))
+	#+END_SRC		
+* Company-mode
+	#+BEGIN_SRC emacs-lisp
+    (require 'company)
+    (require 'company-tern)
+    (add-hook 'after-init-hook 'global-company-mode)
+    (add-to-list 'company-backends 'company-tern)
+    (setq company-dabbrev-downcase 0)
+    (setq company-idle-delay 0)
+	#+END_SRC
+* Nyan-mode
+	#+BEGIN_SRC emacs-lisp
+    (require 'nyan-mode)
+    (setq-default nyan-toggle-wavy-trail t)
+    (nyan-mode)
+    (nyan-start-animation)
+    (nyan-toggle-wavy-trail)
+	#+END_SRC
+* Ido-mode
+	#+BEGIN_SRC emacs-lisp
+		(ido-mode t)
+		(set-face-attribute 'ido-subdir nil :foreground "#ff00d8" :background nil)
+	#+END_SRC
+* Courses
+** Algoritmia
+*** clase 1
+	IDE: netBeans (algo asi, para C) (compilador)
+	Tupia : coordinador de Informatica :v
+**** Algoritmos Fuerza Bruta
+	   Por ejemplo, probar distintas combinaciones hasta encontrar el resultado esperado
+	   -Metodo directo para resover un problema.
+	   -Facil de aplicar
+	   -Estrategia por defecto
+**** Aplicacion de la Estrategia
+	   Ordenamiento
+	   -------------
+	   ,*1er metodo: Intercambio - Busca el menor y lo pone primero (full scan), agaras el primero y lo comparas con todos, si es menor, lo intercambias
+	   ,*2do metodo: Burbuja - Los mas altos se van a flote, al final. Cuando está casi ordenado es más eficiente
+
+	   Busquedas
+	   ------------
+	   ,*Secuencial, Algunos son mas eficientes buscando en listas ordenadas
+
+	   -Algoritmos genéticos
+	   por ejemplo
+
+	   casa _______1 _______2 pucp
+		   |		   ______6
+		   |		  /5
+		   3 ______4/
+
+	   si escojo el camino 1-2
+	   genetic : [ 1 , 2,  3 , 4 , 5 , 6 ]
+				   1   1   0   0   0   0
+	   Si cada uno tiene una distancia, podemos saberla multiplicandolo por su valor en binario (0 o 1) para saber si se esta usando o no
+
+	   +String Matching
+	   Se alinea el patron con los primeros m caracteres del texto y se verifica caracter a caracter si es equivalente, sino lo es, entonces el indicador
+	   avanza uno
+
+	   Ejercicio de codigo + nota final, buscar el codigo 2525 y su nota(en la busqueda no se lee la nota, ya que puede ocasionar errores)
+	   [2 ,5 ,2 ,5 , 0, 8]
+
+	   por ejemplo: caracteres del 0 al 7, del 8 al 9 promedio de practicas, del 10-11, el promedio de ex1 y del12-13 la noa del final
+
+	   ,*Closest Pair
+	   Calcuar la distancia ene cada par de puntos y escoger el par con la menor distancia, sirve para planos
+**** Análisis de eficiencia
+	   -Eficiencia Asintotica
+	   T(n) = Tiempo de ejecucion en n entradas (toma en cuenta los valores grandes, mas no asignaciones y demás cosas constante y sencillas)
+	   Lo mejor es tener menos fors anidados
+	   Por ejemplo, para dos for  anidados (metodo secuencial) O(n^2)
+	   En el metodo de string matching n*m (donde n > m)
+*** clase 2
+**** Recursión
+	 Siempre debe tener un caso base (para el cual se detenga la recursión)
+	 Tener mucho cuidado con la division, 3/2 != 1.5 = 1 
+	 # = n# = (n*(n-2)#)/2
+	 No todos los lenguajes tienen recursion (cobol no tiene), generalmente los mas antiguos no tienen
+** Electronica Digital
+*** Clase 1
+	Asesorias: 
+		Horario:Viernes 11:00am - 1:00pm/ Martes 4:00pm - 6:00pm
+		Lugar : 3er piso del V, coordinacion
+	Formas de ondas digitales: 
+		Se trabaja por flancos o por niveles(Cuando manda información, flip-flop)
+		Señal digital normal(ideales):
+		  _	
+		_| |_
+		Señal deformada(nada es ideal, esto no lo es por la velocidad inicial):
+		  _
+		_/ \_
+**** Ondas Periodicas
+	 Sirven normalmente para dar ritmo: 
+	   _   _   _
+	 _| |_| |_| |
+**** Ondas No Periodicas
+	 Sirven para enviar datos
+	 Por Ejemplo el protocolo q usan los autos (CAN), envia un codigo distinto en cada onda
+	   _   __        _  
+	 _| |_|  |______| |
+**** Tipos de comunicación
+	 Serie
+	 Paralelo: este es mas veloz, porque recibe un mayor volumen de informacion
+	 138 = 10001010
