@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: json 
+# key: json
+# --
+console.log(JSON.stringify($0, null, '\t'))
+ 
